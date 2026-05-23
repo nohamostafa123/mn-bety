@@ -1,11 +1,10 @@
-import axios from 'axios';
-import { store } from '../store/store.js';
-import { clearAuth, setAccessToken } from '../Auth/Features/authSlice';
-import {  showVerificationToast } from './toast';
-import { resendVerificationThunk } from '../Auth/Features/authThunks';
+import axios from "axios";
+import { store } from "../store/store.js";
+import { clearAuth, setAccessToken } from "../Auth/Features/authSlice";
+import { showVerificationToast } from "./toast";
+import { resendVerificationThunk } from "../Auth/Features/authThunks";
 
-const BASE_URL = 'https://mn-bety-server-production.up.railway.app/api';
-// const BASE_URL = 'http://localhost:4000/api';
+const BASE_URL = "https://mn-bety-server-production-c3d7.up.railway.app/api";
 
 // ============================================================
 //         1. PUBLIC INSTANCE — login, register, refresh
@@ -34,7 +33,7 @@ export const privateAxios = axios.create({
  * @returns {string} new access token
  */
 export const refreshTokenRequest = async () => {
-  const res = await publicAxios.post('/auth/refresh-token');
+  const res = await publicAxios.post("/auth/refresh-token");
   return res.data.data; // new access token string
 };
 
@@ -65,7 +64,7 @@ privateAxios.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
     const status = error.response?.status;
-    const message = error.response?.data?.message || '';
+    const message = error.response?.data?.message || "";
 
     // ─── 401: silent token refresh ─────────────────────────────────────────
     if (status === 401 && !originalRequest._retry) {
@@ -86,7 +85,7 @@ privateAxios.interceptors.response.use(
     // Backend message: "Please verify your email address to access this feature."
     if (
       status === 403 &&
-      message === 'Please verify your email address to access this feature.'
+      message === "Please verify your email address to access this feature."
     ) {
       showVerificationToast({
         onResend: async () => {
@@ -94,25 +93,25 @@ privateAxios.interceptors.response.use(
           if (resendVerificationThunk.fulfilled.match(result)) {
             return {
               success: true,
-              message: 'تم إرسال رابط التحقق! راجع صندوق الوارد.',
+              message: "تم إرسال رابط التحقق! راجع صندوق الوارد.",
             };
           }
 
-          const errMsg = result.payload || '';
+          const errMsg = result.payload || "";
           const isCooldown =
-            errMsg.includes('Please wait') ||
-            errMsg.includes('wait before') ||
-            errMsg.includes('recently sent');
+            errMsg.includes("Please wait") ||
+            errMsg.includes("wait before") ||
+            errMsg.includes("recently sent");
 
           return {
             success: false,
             message: isCooldown
-              ? 'يرجى الانتظار دقيقة قبل طلب رابط جديد.'
-              : errMsg || 'حدث خطأ أثناء الإرسال.',
+              ? "يرجى الانتظار دقيقة قبل طلب رابط جديد."
+              : errMsg || "حدث خطأ أثناء الإرسال.",
           };
         },
       });
-      
+
       return Promise.resolve({ data: null, _handled: true });
       // Don't show another error toast — verification toast handles everything
       // return Promise.reject(error);
