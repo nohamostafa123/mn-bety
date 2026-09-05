@@ -4,7 +4,8 @@ import { clearAuth, setAccessToken } from "../Auth/Features/authSlice";
 import { showVerificationToast } from "./toast";
 import { resendVerificationThunk } from "../Auth/Features/authThunks";
 
-const BASE_URL = "https://mn-bety-server-production-c3d7.up.railway.app/api";
+// const BASE_URL = "https://mn-bety-server-production-c3d7.up.railway.app/api";
+const BASE_URL = "https://mn-bety-server-production-26c0.up.railway.app/api";
 
 // ============================================================
 //         1. PUBLIC INSTANCE — login, register, refresh
